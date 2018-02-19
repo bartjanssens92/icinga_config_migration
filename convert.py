@@ -12,6 +12,7 @@ from convert_lib.build_icinga_lib.commands import build_icinga_commands
 from convert_lib.build_icinga_lib.services import build_icinga_services
 from convert_lib.build_icinga_lib.hostTemplates import build_icinga_hostTemplates
 from convert_lib.build_icinga_lib.contacts import build_icinga_contacts
+from convert_lib.build_icinga_lib.serviceTemplates import build_icinga_serviceTemplates
 
 # Debug
 lol = 'lol'
@@ -31,8 +32,10 @@ def build_icinga_config(write, object_name):
         build_icinga_hosts(object_hash,outputfile,inputdir)
     elif object_name in ['hostTemplate']:
         build_icinga_hostTemplates(object_hash,outputfile)
+    elif object_name in ['serviceTemplate']:
+        build_icinga_serviceTemplates(object_hash,outputfile,inputdir)
     elif object_name in ['service']:
-        build_icinga_services(object_hash,outputfile)
+        build_icinga_services(object_hash,outputfile,inputdir)
     elif object_name in ['command']:
         build_icinga_commands(object_hash,outputfile)
     elif object_name in ['contact']:
@@ -60,7 +63,7 @@ def main():
         else:
             assert False
 
-    if not object_name in ['host','service','notification','contact','hostgroup','servicegroup','contactgroup','hostTemplate','command']:
+    if not object_name in ['host','service','serviceTemplate','notification','contact','hostgroup','servicegroup','contactgroup','hostTemplate','command']:
         error("Object not known")
     #object_hash = build_hash(object_name)
     build_icinga_config(write, object_name)

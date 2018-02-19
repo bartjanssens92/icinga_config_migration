@@ -31,10 +31,23 @@ def build_hash(object_name,inputdir):
             #debug(config)
             # Get the keyname
             if object_name in ['service']:
-                if not config['service_description'] in mainhash:
-                    mainhash[config['service_description']] = {'hosts' : {},}
-                mainhash[config['service_description']]['hosts'][config['host_name']] = config
-            elif object_name in ['hostTemplate']:
+                if 'check_command' in config and isinstance(config['check_command'], list):
+                    #debug("Check_command: " + str(config['check_command']))
+                    #debug("Check_command: " + str(config))
+                    key = str(",".join(config['check_command']))
+                elif 'check_command' in config and not isinstance(config['check_command'], list):
+                    #debug("Check_command: " + str(config['check_command']))
+                    #debug("Check_command: " + str(config))
+                    key = str(config['check_command'])
+                else:
+                    key = config['service_description']
+                # If the key does not exist, create it
+                if not key in mainhash:
+                    mainhash[key] = {'hosts' : [],}
+                # Fill the key with data
+                mainhash[key]['hosts'].append(config['host_name'])
+                mainhash[key]['config'] = config
+            elif object_name in ['hostTemplate','serviceTemplate']:
                 mainhash[config['name']] = config
             else:
                 mainhash[config[object_name + '_name']] = config
@@ -48,14 +61,21 @@ def build_hash(object_name,inputdir):
         else:
             linearray = line.split()
             key = linearray.pop(0)
-            #debug(key)
+            #debug("Linearray: " + str(linearray))
+            #debug("Linearray #: " + str(len(linearray)))
+            #debug("Key: " + key)
+            # Check if the array contains more then one key
+            if len(linearray) == 0:
+                #debug('skip valueless key')
+                continue
             if ',' in linearray[0]:
                 value = linearray[0].split(',')
             # commands are ugly
-            elif object_name in ['command']:
+            elif object_name in ['command','service']:
                 value = str(" ".join(linearray))
             else:
                 value = str(linearray[0])
+            #debug('Value: ' + str(value))
             config[key] = value
 
     #for object_t in mainhash:
