@@ -33,6 +33,8 @@ template Service "generic-service" {
         # Check for common params
         if 'use' in object_hash[service] and 'check_command' in object_hash[service]:
             config_block += '  import "' + object_hash[service]['use'] + '"\n'
+        elif 'use' in object_hash[service]:
+            config_block += '  import "' + object_hash[service]['use'] + '"\n'
         elif 'check_command' in object_hash[service]:
             config_block += '  import "generic-service"\n'
         else:

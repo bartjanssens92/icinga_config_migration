@@ -81,6 +81,11 @@ apply Service "service1" {
             else:
                 config_block += '  check_command = "' + check_command + '"\n'
 
+        # if there is no check_command there is nothing to apply
+        else:
+            continue
+            #config_block += '  check_command = "' + object_hash[service]['config']['use'] + '"\n'
+
         config_block += '\n'
         # Get the hosts
         config_block += '  assign where host.name in [ "' + '", "'.join(object_hash[service]['hosts']) + '" ]\n'
