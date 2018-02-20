@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 from convert_lib.general import info,error,write_configfile,append_configfile,is_number
 from convert_lib.general import debug as debug_general
-from convert_lib.build_icinga_lib.convert_macro import convert as convert_macro
+from convert_macro import convert as convert_macro
 from collections import OrderedDict
 
 def debug(msg):
