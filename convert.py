@@ -16,6 +16,7 @@ from convert_lib.build_icinga_lib.services import build_icinga_services
 from convert_lib.build_icinga_lib.hostTemplates import build_icinga_hostTemplates
 from convert_lib.build_icinga_lib.contacts import build_icinga_contacts
 from convert_lib.build_icinga_lib.serviceTemplates import build_icinga_serviceTemplates
+from convert_lib.build_icinga_lib.notifications import build_notifications
 
 # Locations of the input dirs ( hardcoded for now )
 inputdir='/home/bjanssens/Documents/centreon/original/centreon-engine/'
@@ -27,7 +28,7 @@ outputdir='/home/bjanssens/Documents/centreon/converted/'
 # Figure out how global parameters work in python
 debug_setting = False
 object_name = 'all'
-objects_all = ['host','service','serviceTemplate','notification','contact','hostgroup','servicegroup','hostTemplate','command']
+objects_all = ['host','service','serviceTemplate','contact','hostgroup','servicegroup','hostTemplate','command','notification']
 
 def build_icinga_config(write, object_name):
     """Function to build the icinga config"""
@@ -42,7 +43,7 @@ def build_icinga_config(write, object_name):
     if object_name in ['host']:
         build_icinga_hosts(object_hash,outputfile,inputdir)
     elif object_name in ['hostTemplate']:
-        build_icinga_hostTemplates(object_hash,outputfile)
+        build_icinga_hostTemplates(object_hash,outputfile,inputdir)
     elif object_name in ['serviceTemplate']:
         build_icinga_serviceTemplates(object_hash,outputfile,inputdir)
     elif object_name in ['service']:
@@ -56,7 +57,7 @@ def build_icinga_config(write, object_name):
     elif object_name in ['hostgroup']:
         debug('Not ready yet')
     elif object_name in ['notification']:
-        debug('Not ready yet')
+        build_icinga_notifications(inputdir,outputfile)
     elif object_name in ['all']:
         for object_n in objects_all:
             info('Building configuration for: ' + object_n)

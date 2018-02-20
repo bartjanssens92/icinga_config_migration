@@ -2,7 +2,7 @@
 from convert_lib.general import info,error,write_configfile,append_configfile
 from convert_lib.general import debug as debug_general
 from convert_lib.build_hash import build_hash
-from convert_lib.build_icinga_lib.host_notification import build_host_notification_hash
+from notifications import build_notifications
 
 def debug(msg):
     """
@@ -74,42 +74,8 @@ object Host "$hostname" {
         #config_block = config_block + '  vars.environment = "' + host_environment + '"\n'
 
         # Check the notifications
-        host_notification = build_host_notification_hash('host', host_hash, contact_hash)
-        # Only get the mail and sms notification types
-        host_mail = host_notification['mail']
-        host_sms = host_notification['sms']
+        config_block += build_notifications(host_hash,inputdir)
 
-        # Mail
-        if host_mail['users'] or host_mail['groups']:
-            config_block += '  vars.notification["mail"] = {\n'
-            if host_mail['groups'] != []:
-                if len(host_mail['groups']) > 1:
-                    config_block += '    groups = [ "' + '", "'.join(host_mail['groups']) + '" ]\n'
-                else:
-                    config_block += '    groups = [ "' + str(host_mail['groups'][0]) + '" ]\n'
-            if host_mail['users'] != []:
-                if len(host_mail['users']) > 1:
-                    config_block += '    users = [ "' + '", "'.join(host_mail['users']) + '" ]\n'
-                else:
-                    config_block += '    users = [ "' + str(host_mail['users'][0]) + '" ]\n'
-            # Close the mail notification block
-            config_block += '  }\n\n'
-
-        # SMS
-        if host_sms['users'] or host_sms['groups']:
-            config_block += '  vars.notification["sms"] = {\n'
-            if host_sms['groups'] != []:
-                if len(host_sms['groups']) > 1:
-                    config_block += '    groups = [ "' + '"," '.join(host_sms['groups']) + '"]\n'
-                else:
-                    config_block += '    groups = [ "' + str(host_sms['groups'][0]) + ' "]\n'
-            if host_sms['users'] != []:
-                if len(host_sms['users']) > 1:
-                    config_block += '    users = [ "' + '"," '.join(host_sms['users']) + '"]\n'
-                else:
-                    config_block += '    users = [ "' + str(host_sms['users'][0]) + ' "]\n'
-            # Close the sms notification block
-            config_block += '  }\n\n'
         # Close the host config block
         config_block += '}\n'
 

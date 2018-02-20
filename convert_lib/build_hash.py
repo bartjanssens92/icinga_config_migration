@@ -100,6 +100,6 @@ def build_hash(object_name,inputdir):
     #    debug(object_t)
     #    debug(mainhash[object_t])
 
-    info("Converted " + str(len(mainhash)) + " " + object_name + " objects.")
+    debug("Converted " + str(len(mainhash)) + " " + object_name + " objects.")
     debug("Read " + str(line_amount) + " lines.")
     return mainhash

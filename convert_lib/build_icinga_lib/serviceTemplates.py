@@ -1,9 +1,11 @@
 #!/usr/bin/python2.7
+from collections import OrderedDict
+# Custom
 from convert_lib.general import info,error,write_configfile,append_configfile
 from convert_lib.general import debug as debug_general
 from convert_lib.build_hash import build_hash
+from notifications import build_notifications
 from commands import build_icinga_commands
-from collections import OrderedDict
 
 def debug(msg):
     """
@@ -30,6 +32,7 @@ template Service "generic-service" {
     write_blocks = 0
     service_template_hash = OrderedDict({})
     commands_hash = build_icinga_commands(build_hash('command',inputdir),'dummydir',False)
+    contact_hash = build_hash('contact',inputdir)
 
     for service in object_hash:
         debug('--------------------')
@@ -109,6 +112,10 @@ template Service "generic-service" {
 
                 # Add to the template
                 template_hash['check_command'] = object_hash[service]['check_command']
+
+            # Notification stuff
+            config_block += '\n'
+            config_block += build_notifications(template_hash,inputdir,'service')
 
         # Close the config block
         config_block += '}\n'

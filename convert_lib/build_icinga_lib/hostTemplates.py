@@ -1,6 +1,7 @@
 #!/usr/bin/python2.7
 from convert_lib.general import info,error,write_configfile,append_configfile
 from convert_lib.general import debug as debug_general
+from notifications import build_notifications
 
 def debug(msg):
     """
@@ -10,7 +11,7 @@ def debug(msg):
     if param_debug:
         debug_general(msg)
 
-def build_icinga_hostTemplates(object_hash,outputfile):
+def build_icinga_hostTemplates(object_hash,outputfile,inputdir):
     """Function to build the hosttemplates:
     Note that there are states and types now are defined in the Notification template.
 template Host "generic-host" {
@@ -45,6 +46,12 @@ template Host "generic-host" {
             config_block += '  check_command = "' + template_hash['check_command'] + '"\n'
         else:
             config_block += '  check_command = "' + default_check_command + '"\n'
+
+        # Notifications
+        config_block += '\n'
+        config_block += build_notifications(template_hash,inputdir)
+
+        # Close the host configuration block
         config_block += '}\n\n'
 
         append_configfile(config_block,outputfile)

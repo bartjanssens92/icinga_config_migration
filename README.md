@@ -15,11 +15,13 @@ It does not mean that the generated config will 100% match the behavior of the o
 - Commands
 - Users
 - Usergroups
+- Services
 
 ## What doesn't work (yet)
 
-- Services
-- Notifications
+- Notifications ( WIP )
+- Servicegroups
+- Hostgroups
 
 ## How to use
 
