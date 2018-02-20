@@ -2,6 +2,7 @@
 from convert_lib.general import debug,info,error,write_configfile,append_configfile
 from convert_lib.build_hash import build_hash
 from commands import build_icinga_commands
+from serviceTemplates import build_icinga_serviceTemplates
 from collections import OrderedDict
 
 def build_icinga_services(object_hash,outputfile,inputdir):
@@ -21,12 +22,13 @@ apply Service "service1" {
     #Defaults
     write_blocks = 0
     commands_hash = build_icinga_commands(build_hash('command',inputdir),'dummydir',False)
+    servicetemplates_hash = build_icinga_serviceTemplates(build_hash('serviceTemplate',inputdir),'/dev/null',inputdir,False)
 
     for service in object_hash:
-        debug('--------------------')
-        debug(service)
-        debug('--------------------')
-        debug(object_hash[service]['config'])
+        #debug('--------------------')
+        #debug(service)
+        #debug('--------------------')
+        #debug(object_hash[service]['config'])
 
         # Make sure the servicename is sane
         if '!' in service:
@@ -39,7 +41,7 @@ apply Service "service1" {
 
         # Build the config_block
         config_block = 'apply Service "' + sane_service + '" {\n'
-        debug(sane_service)
+        #debug(sane_service)
 
         # Get the import
         if 'use' in object_hash[service]['config']:
@@ -55,7 +57,7 @@ apply Service "service1" {
             if isinstance(check_command, list):
                 check_command = ",".join(check_command)
 
-            debug("Check command: " + check_command)
+            #debug("Check command: " + check_command)
             # This means that the command is passing options
             if '!' in service:
                 sane_check_command = check_command.split('!')[0]
@@ -81,10 +83,16 @@ apply Service "service1" {
             else:
                 config_block += '  check_command = "' + check_command + '"\n'
 
-        # if there is no check_command there is nothing to apply
+        # if there is no check_command try and figure out what check_command to use
         else:
-            continue
-            #config_block += '  check_command = "' + object_hash[service]['config']['use'] + '"\n'
+            # Figure out the check_command
+            check_command = find_check_command(servicetemplates_hash, object_hash[service]['config']['use'])
+            #debug('Figured out check command: ' + str(check_command))
+            #check_command = object_hash[service]['config']['use']
+            if check_command == 'error':
+                config_block += '  check_command = "Unable to find check_command"\n'
+            else:
+                config_block += '  check_command = "' + check_command + '"\n'
 
         config_block += '\n'
         # Get the hosts
@@ -99,3 +107,15 @@ apply Service "service1" {
         write_blocks += 1
 
     info('Wrote ' + str(write_blocks) + ' service objects')
+
+def find_check_command(template_hash, service):
+    """
+    Function to find what service uses what check_command for apply service configuration.
+    Recusive function as sometimes a template just include another one.
+    """
+    if 'check_command' in template_hash[service]:
+        return template_hash[service]['check_command']
+    elif 'import' in template_hash[service]:
+        return find_check_command(template_hash, template_hash[service]['import'])
+    else:
+        return 'error'
