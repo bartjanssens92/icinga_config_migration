@@ -22,7 +22,7 @@ def write_configfile(block,filelocation):
     fh.close
 
 def append_configfile(block,filelocation):
-    info('Wrote configblock to ' + filelocation)
+    #info('Wrote configblock to ' + filelocation)
     fh = open(filelocation, 'a')
     fh.write(block)
     fh.close
