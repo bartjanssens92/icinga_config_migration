@@ -254,9 +254,9 @@ object Service "my-ping" {
         else:
             return_hash[command] = arguments
 
-    info('Wrote ' + str(write_blocks) + ' command objects')
-
-    if not write_config:
+    if write_config:
+        info('Wrote ' + str(write_blocks) + ' command objects')
+    else:
         return return_hash
 
 def quoting_sane(i):
