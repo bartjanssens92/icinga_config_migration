@@ -26,14 +26,17 @@ outputdir='/home/bjanssens/Documents/centreon/converted/'
 # Default params
 # Figure out how global parameters work in python
 debug_setting = False
+object_name = 'all'
+objects_all = ['host','service','serviceTemplate','notification','contact','hostgroup','servicegroup','hostTemplate','command']
 
 def build_icinga_config(write, object_name):
     """Function to build the icinga config"""
-    # Create if does not exists
-    outputfile = outputdir + object_name + '.conf'
 
-    # Use the fancy build_hash
-    object_hash = build_hash(object_name,inputdir)
+    if not object_name in ['all','notification']:
+        outputfile = outputdir + object_name + '.conf'
+        object_hash = build_hash(object_name,inputdir)
+    elif not object_name in ['all']:
+        outputfile = outputdir + object_name + '.conf'
 
     # Depending on the object type different actions need to be taken
     if object_name in ['host']:
@@ -48,14 +51,24 @@ def build_icinga_config(write, object_name):
         build_icinga_commands(object_hash,outputfile)
     elif object_name in ['contact']:
         build_icinga_contacts(object_hash,outputfile,inputdir)
+    elif object_name in ['servicegroup']:
+        debug('Not ready yet')
+    elif object_name in ['hostgroup']:
+        debug('Not ready yet')
     elif object_name in ['notification']:
         debug('Not ready yet')
+    elif object_name in ['all']:
+        for object_n in objects_all:
+            info('Building configuration for: ' + object_n)
+            build_icinga_config(write, object_n)
+            info('')
 
 def main():
     # Default
     global debug_setting
     global inputdir
     global outputdir
+    global object_name
     write = False
     # Getopt
     try:
@@ -77,7 +90,7 @@ def main():
         else:
             assert False
 
-    if not object_name in ['host','service','serviceTemplate','notification','contact','hostgroup','servicegroup','contactgroup','hostTemplate','command']:
+    if not object_name in objects_all and not object_name == 'all':
         error("Object not known")
     if not os.path.isdir(inputdir):
         error("Input directory does not exist!")
