@@ -1,6 +1,23 @@
 #!/usr/bin/python2.7
-from general import error,debug,info
+from general import error,info
+from general import debug as debug_general
 from collections import OrderedDict
+
+def debug(msg):
+    """
+    Function to enable per-object debugging.
+    """
+    param_debug = False
+    if param_debug:
+        debug_general(msg)
+
+def debug_3(msg):
+    """
+    Function to enable per-object debugging.
+    """
+    param_debug_3 = False
+    if param_debug_3:
+        debug_general(msg)
 
 def build_hash(object_name,inputdir):
     """This function returns the object hash"""
@@ -23,12 +40,12 @@ def build_hash(object_name,inputdir):
     line_amount = 0
     for line in input_configfile:
         line_amount += 1
-        #debug(line)
+        debug_3(line)
         # Check if the line starts with a define
         if line.startswith("define"):
             config = {}
         elif line.endswith("}\n"):
-            #debug(config)
+            debug_3(config)
             # Get the keyname
             if object_name in ['service']:
                 if 'check_command' in config and isinstance(config['check_command'], list):
@@ -61,9 +78,9 @@ def build_hash(object_name,inputdir):
         else:
             linearray = line.split()
             key = linearray.pop(0)
-            #debug("Linearray: " + str(linearray))
-            #debug("Linearray #: " + str(len(linearray)))
-            #debug("Key: " + key)
+            debug("Linearray: " + str(linearray))
+            debug("Linearray #: " + str(len(linearray)))
+            debug("Key: " + key)
             # Check if the array contains more then one key
             if len(linearray) == 0:
                 #debug('skip valueless key')
@@ -75,7 +92,7 @@ def build_hash(object_name,inputdir):
                 value = str(" ".join(linearray))
             else:
                 value = str(linearray[0])
-            #debug('Value: ' + str(value))
+            debug('Value: ' + str(value))
             config[key] = value
 
     #for object_t in mainhash:
@@ -84,5 +101,5 @@ def build_hash(object_name,inputdir):
     #    debug(mainhash[object_t])
 
     info("Converted " + str(len(mainhash)) + " " + object_name + " objects.")
-    info("Read " + str(line_amount) + " lines.")
+    debug("Read " + str(line_amount) + " lines.")
     return mainhash
