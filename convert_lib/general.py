@@ -1,3 +1,5 @@
+import sys
+
 def error(message):
     """Function for echoing errors and exiting"""
     print('ERROR: ' + str(message))
@@ -9,8 +11,8 @@ def info(message):
 
 def debug(message):
     """Function for echoing debug"""
-    debug = True
-    if debug:
+    debug_setting = True
+    if debug_setting:
         print('DEBUG: ' + str(message))
 
 def write_configfile(block,filelocation):
