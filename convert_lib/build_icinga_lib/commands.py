@@ -1,7 +1,16 @@
 #!/usr/bin/python2.7
-from convert_lib.general import debug,info,error,write_configfile,append_configfile,is_number
+from convert_lib.general import info,error,write_configfile,append_configfile,is_number
+from convert_lib.general import debug as debug_general
 from convert_lib.build_icinga_lib.convert_macro import convert as convert_macro
 from collections import OrderedDict
+
+def debug(msg):
+    """
+    Function to enable per-object debugging.
+    """
+    param_debug = False;
+    if param_debug:
+        debug_general(msg)
 
 def build_icinga_commands(object_hash,outputfile,write_config=True):
     """Function to build the commands
@@ -52,6 +61,7 @@ object Service "my-ping" {
     for command in object_hash:
         debug('--------------------')
         debug(command)
+        debug('--------------------')
         debug(object_hash[command])
         # Ignore notifications as those are dealth with somewhere else
         if 'notify' in command:
@@ -78,12 +88,12 @@ object Service "my-ping" {
             # To catch smth like '-B -K'
             if prev_key and not key in arguments:
                 arguments[key] = ''
-                #debug('Created new key: ' + key)
+                debug('Created new key: ' + key)
             # If the previous was a key and it's the last element
             if prev_key and argument == command_array[-1] and not '=' in argument and argument.startswith('-'):
                 arguments[argument] = ''
-                #debug('Last element')
-                #debug('Created new key: ' + argument)
+                debug('Last element')
+                debug('Created new key: ' + argument)
             #if argument.startswith('-') and not prev_key:
             if argument.startswith('-') and not ignore_dash:
                 # -h=
@@ -234,7 +244,7 @@ object Service "my-ping" {
 	    config_block += '    PluginDir + "/' + command_array[0].split('/').pop() + '"\n'
 	config_block = config_block + '  ]\n\n'
         config_block = config_block + arguments_block + vars_block + '}\n'
-        #debug(config_block)
+        debug(config_block)
 
         # Write the config block
         if write_config:
@@ -252,12 +262,16 @@ object Service "my-ping" {
 def quoting_sane(i):
     if '""' in i:
         debug('found ""')
+        pass
     if '"' in i:
         debug('found "')
 	return i.replace('"','')
         debug('found ""')
     if "''" in i:
         debug("found ''")
+        pass
     if "'" in i:
         debug("found '")
+        pass
     return i
+
