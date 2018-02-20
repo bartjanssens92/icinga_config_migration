@@ -1,7 +1,16 @@
 #!/usr/bin/python2.7
-from convert_lib.general import debug,info,error,write_configfile,append_configfile
+from convert_lib.general import info,error,write_configfile,append_configfile
+from convert_lib.general import debug as debug_general
 from convert_lib.build_hash import build_hash
 from convert_lib.build_icinga_lib.host_notification import build_host_notification_hash
+
+def debug(msg):
+    """
+    Function to enable per-object debugging.
+    """
+    param_debug = False
+    if param_debug:
+        debug_general(msg)
 
 def build_icinga_hosts(object_hash,outputfile,inputdir):
     """Function to build the icinga hosts config file:
@@ -37,8 +46,8 @@ object Host "$hostname" {
     for host in object_hash:
 
         # Debug
-        #debug('--------------------')
-        #debug("host_hash: " + str(object_hash[host]))
+        debug('--------------------')
+        debug("host_hash: " + str(object_hash[host]))
 
         host_hash = object_hash[host]
 

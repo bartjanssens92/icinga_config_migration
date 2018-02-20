@@ -1,5 +1,15 @@
 #!/usr/bin/python2.7
-from convert_lib.general import debug,info,error,write_configfile,append_configfile
+from convert_lib.general import info,error,write_configfile,append_configfile
+from convert_lib.general import debug as debug_general
+
+def debug(msg):
+    """
+    Function to enable per-object debugging.
+    """
+    param_debug = False
+    if param_debug:
+        debug_general(msg)
+
 def build_icinga_hostTemplates(object_hash,outputfile):
     """Function to build the hosttemplates:
     Note that there are states and types now are defined in the Notification template.

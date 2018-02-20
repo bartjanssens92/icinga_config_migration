@@ -8,7 +8,7 @@ def debug(msg):
     """
     Function to enable per-object debugging.
     """
-    param_debug = False;
+    param_debug = False
     if param_debug:
         debug_general(msg)
 

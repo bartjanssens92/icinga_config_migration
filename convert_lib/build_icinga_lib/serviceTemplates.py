@@ -1,8 +1,17 @@
 #!/usr/bin/python2.7
-from convert_lib.general import debug,info,error,write_configfile,append_configfile
+from convert_lib.general import info,error,write_configfile,append_configfile
+from convert_lib.general import debug as debug_general
 from convert_lib.build_hash import build_hash
 from commands import build_icinga_commands
 from collections import OrderedDict
+
+def debug(msg):
+    """
+    Function to enable per-object debugging.
+    """
+    param_debug = False
+    if param_debug:
+        debug_general(msg)
 
 def build_icinga_serviceTemplates(object_hash,outputfile,inputdir,write_config=True):
     """Function to build the icinga services templates file:
@@ -72,7 +81,7 @@ template Service "generic-service" {
 
                 # Get the check_command
                 check_command = check_command_list.pop(0)
-                #debug("Check_command: " + check_command)
+                debug("Check_command: " + check_command)
                 config_block += '  check_command = "' + check_command + '"\n'
 
                 # Add to the template
@@ -80,7 +89,7 @@ template Service "generic-service" {
 
                 # Get the arguments of the command
                 arguments = commands_hash[check_command]
-                #debug('Arguments: ' + str(arguments))
+                debug('Arguments: ' + str(arguments))
 
                 # Build the values to pass
                 argument_i = 0
@@ -103,7 +112,7 @@ template Service "generic-service" {
 
         # Close the config block
         config_block += '}\n'
-        #debug('complete config block:\n' + config_block)
+        debug('complete config block:\n' + config_block)
 
         if write_config:
             # Write the config file
