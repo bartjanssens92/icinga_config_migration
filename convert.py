@@ -16,8 +16,10 @@ from convert_lib.build_icinga_lib.serviceTemplates import build_icinga_serviceTe
 
 # Debug
 lol = 'lol'
-inputdir='/mnt/home/bjanssens/Documents/centreon/original/centreon-engine/'
-outputdir='/mnt/home/bjanssens/Documents/centreon/converted/'
+inputdir='/home/bjanssens/Documents/centreon/original/centreon-engine/'
+outputdir='/home/bjanssens/Documents/centreon/converted/'
+#inputdir='/mnt/home/bjanssens/Documents/centreon/original/centreon-engine/'
+#outputdir='/mnt/home/bjanssens/Documents/centreon/converted/'
 
 def build_icinga_config(write, object_name):
     """Function to build the icinga config"""
