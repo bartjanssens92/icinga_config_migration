@@ -1,10 +1,12 @@
 #!/usr/bin/python2.7
+from collections import OrderedDict
+# Custom
 from convert_lib.general import info,error,write_configfile,append_configfile
 from convert_lib.general import debug as debug_general
 from convert_lib.build_hash import build_hash
 from commands import build_icinga_commands
 from serviceTemplates import build_icinga_serviceTemplates
-from collections import OrderedDict
+from notifications import build_notifications
 
 def debug(msg):
     """
@@ -104,6 +106,8 @@ apply Service "service1" {
             else:
                 config_block += '  check_command = "' + check_command + '"\n'
 
+        # Notifications
+        config_block += build_notifications(object_hash[service],inputdir,'service')
         config_block += '\n'
         # Get the hosts
         config_block += '  assign where host.name in [ "' + '", "'.join(object_hash[service]['hosts']) + '" ]\n'
