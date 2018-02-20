@@ -170,7 +170,7 @@ def build_notifications(object_hash,inputdir,notif_type='host'):
     # Return the block
     return config_block
 
-def build_icinga_notifications_hashes(inputdir,outputfile):
+def build_icinga_notifications(inputdir,outputfile):
     """
     Function to build notification objects.
 

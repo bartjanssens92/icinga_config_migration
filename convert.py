@@ -16,6 +16,7 @@ from convert_lib.build_icinga_lib.services import build_icinga_services
 from convert_lib.build_icinga_lib.hostTemplates import build_icinga_hostTemplates
 from convert_lib.build_icinga_lib.contacts import build_icinga_contacts
 from convert_lib.build_icinga_lib.serviceTemplates import build_icinga_serviceTemplates
+from convert_lib.build_icinga_lib.notifications import build_icinga_notifications
 from convert_lib.build_icinga_lib.notifications import build_notifications
 
 # Locations of the input dirs ( hardcoded for now )
