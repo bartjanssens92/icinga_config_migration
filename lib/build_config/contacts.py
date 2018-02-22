@@ -1,4 +1,3 @@
-import lib.settings
 from lib.general import *
 from lib.build_hash import build_hash
 

@@ -23,4 +23,6 @@ debug = False
 debug2 = False
 debug3 = False
 debug4 = False
-
+# Default values
+default_service_import = 'generic-service'
+default_check_command = 'base_host_alive'

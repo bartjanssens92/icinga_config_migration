@@ -13,6 +13,10 @@ def render(object_hash):
     write_blocks = 0
 
     for serviceGroups in object_hash:
+        debug('--------------------')
+        debug(serviceGroup)
+        debug('--------------------')
+        debug(object_hash[serviceGroup])
 
         # Init config block
         config_block = ''

@@ -47,7 +47,7 @@ def render(object_hash, commands_hash, contact_hash, write_config=True):
             config_block += '  import "' + object_hash[service]['use'] + '"\n'
             template_hash['import'] = object_hash[service]['use']
         elif 'check_command' in object_hash[service]:
-            config_block += '  import "generic-service"\n'
+            config_block += '  import "' + settings.default_service_import + '"\n'
         else:
             pass
 

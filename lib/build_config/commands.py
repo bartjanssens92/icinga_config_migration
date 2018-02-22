@@ -1,7 +1,6 @@
 #!/usr/bin/python2.7
 from collections import OrderedDict
 # Custom
-import lib.settings
 from lib.general import *
 from lib.build_hash import build_hash
 from convert import convert_macro

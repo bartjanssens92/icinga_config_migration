@@ -41,11 +41,10 @@ def render(object_hash, commands_hash, servicetemplates_hash, contact_hash):
 
         # Get the import
         # Every service needs the import statement otherwise use the default one
-        # @TODO: Move default_import to settings
         if 'use' in object_hash[service]['config']:
             config_block += '  import "' + object_hash[service]['config']['use'] + '"\n'
         else:
-            config_block += '  import "generic-service"\n'
+            config_block += '  import "' + settings.default_service_import + '"\n'
 
         # Get the check_command
         if 'check_command' in object_hash[service]['config']:

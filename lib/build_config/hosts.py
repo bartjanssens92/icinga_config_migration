@@ -1,5 +1,4 @@
 #!/usr/bin/python2.7
-import lib.settings
 from lib.general import *
 from notifications import render_notifications
 
