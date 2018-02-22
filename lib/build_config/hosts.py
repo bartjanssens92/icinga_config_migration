@@ -34,7 +34,9 @@ def render(object_hash, contact_hash):
 
         # Debug
         debug('--------------------')
-        debug("host_hash: " + str(object_hash[host]))
+        debug(host)
+        debug('--------------------')
+        debug3("host_hash: " + str(object_hash[host]))
 
         host_hash = object_hash[host]
 

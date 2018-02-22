@@ -59,7 +59,7 @@ def build_notification_contacts(object_type, object_hash, contact_hash):
         else:
             notification_hash['mail']['groups'].append(object_hash['contact_groups'])
 
-    debug('Notification hash: ' + str(notification_hash))
+    debug3('Notification hash: ' + str(notification_hash))
 
     # Build the configuration blocks
     config_block = ''

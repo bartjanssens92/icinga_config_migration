@@ -29,7 +29,9 @@ def render(object_hash,contact_hash):
         config_block = 'template Host "' + template_hash['name'] + '" {\n'
 
         debug('--------------------')
-        debug(template_hash)
+        debug(template)
+        debug('--------------------')
+        debug3(template_hash)
 
         # Get the needed values
         if 'max_check_attempts' in template_hash:

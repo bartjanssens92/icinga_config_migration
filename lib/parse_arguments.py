@@ -6,8 +6,16 @@ import sys
 import getopt
 import os
 # Custom libs
+import __main__ as main
 from general import *
 import settings
+
+def help():
+    """
+    Function to display help text, invoked by passing -h or --help.
+    """
+print ''
+print ''
 
 # Getopt
 try:
