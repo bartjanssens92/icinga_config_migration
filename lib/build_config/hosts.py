@@ -1,17 +1,9 @@
 #!/usr/bin/python2.7
 import lib.settings
 from lib.general import *
-from lib.build_hash import build_hash
 from notifications import render_notifications
 
-def config():
-    # To find the notification method, parse the contacts
-    object_hash = build_hash('host')
-    contact_hash = build_hash('contact')
-    # Render the hosts config
-    render_hosts(object_hash, contact_hash)
-
-def render_hosts(object_hash, contact_hash):
+def render(object_hash, contact_hash):
     """Function to build the icinga hosts config file:
     object Host "$hostname" {
       import "linux-host"

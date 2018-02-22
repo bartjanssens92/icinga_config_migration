@@ -1,12 +1,8 @@
 #!/usr/bin/python2.7
 from lib.general import *
-from lib.build_hash import build_hash
 from notifications import render_notifications
 
-def config():
-    render_hostTemplates(build_hash('hostTemplate'),build_hash('contact'))
-
-def render_hostTemplates(object_hash,contact_hash):
+def render(object_hash,contact_hash):
     """Function to build the hosttemplates:
     Note that there are states and types now are defined in the Notification template.
     template Host "generic-host" {

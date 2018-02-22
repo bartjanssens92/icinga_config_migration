@@ -1,38 +1,45 @@
 from lib.general import *
+from lib.build_hash import build_hash
 
-# 3 hard things in IT, naming is causing this mess
-import hosts as hosts_
-import hostTemplates as hostTemplates_
-import hostGroups as hostGroups_
-import services as services_
-import serviceTemplates as serviceTemplates_
-import serviceGroups as serviceGroups_
-import commands as commands_
-import contacts as contacts_
-#import hosts as hosts_
-#import hosts as hosts_
+import hosts
+import hostTemplates
+import hostGroups
+import services
+import serviceTemplates
+import serviceGroups
+import commands
+import contacts
 
-# Wrappers
-def hosts():
-    hosts_.config()
+def actions(object_name, contact_hash):
+    """
+    @TODO : Add something here
+    Passing the contact_hash so that every object doesn't need to generate it.
+    """
+    settings.outputfile = settings.outputdir + object_name + '.conf'
 
-def hostTemplates():
-    hostTemplates_.config()
+    # Depending on the object type different actions need to be taken
+    if object_name in ['host']:
+        hosts.render(build_hash(object_name), contact_hash)
+    elif object_name in ['hostTemplate']:
+        hostTemplates.render(build_hash(object_name), contact_hash)
+    elif object_name in ['hostgroup']:
+        hostGroups.render(build_hash(object_name))
+    elif object_name in ['service']:
+        services.render(build_hash(object_name), commands.get_hash(), serviceTemplates.get_hash(), contact_hash)
+    elif object_name in ['serviceTemplate']:
+        serviceTemplates.render(build_hash(object_name), commands.get_hash(), contact_hash)
+    elif object_name in ['servicegroup']:
+        serviceGroups.render(build_hash(object_name))
+    elif object_name in ['command']:
+        commands.render(build_hash(object_name))
+    elif object_name in ['contact']:
+        contacts.render(contact_hash, build_hash('contactgroup'))
+    #elif object_name in ['notification']:
+    #    build_icinga_notifications(inputdir,outputfile)
+    elif object_name in ['all']:
+        for object_n in settings.objects_all:
+            info('Building configuration for: ' + object_n)
+            actions(object_n, contact_hash)
+            info('')
 
-def hostGroups():
-    hostGroups_.config()
-
-def services():
-    services_.config()
-
-def serviceTemplates():
-    serviceTemplates_.config()
-
-def serviceGroups():
-    serviceGroups_.config()
-
-def commands():
-    commands_.config()
-
-def contacts():
-    contacts_.config()
+actions(settings.object_name, build_hash('contact'))

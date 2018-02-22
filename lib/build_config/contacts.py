@@ -3,10 +3,7 @@ import lib.settings
 from lib.general import *
 from lib.build_hash import build_hash
 
-def config():
-    render_contacts(build_hash('contact'), build_hash('contactgroup'))
-
-def render_contacts(object_hash, groups_hash):
+def render(object_hash, groups_hash):
     """Function to build the users:
 object User "testconfig-user" {
   import "generic-user"

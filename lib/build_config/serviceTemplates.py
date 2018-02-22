@@ -10,12 +10,9 @@ def get_hash():
     """
     Function to return a hash
     """
-    return render_serviceTemplates(build_hash('serviceTemplate'), get_commands_hash(), build_hash('contact'), False)
+    return render(build_hash('serviceTemplate'), get_commands_hash(), build_hash('contact'), False)
 
-def config():
-    render_serviceTemplates(build_hash('serviceTemplate'), get_commands_hash(), build_hash('contact'))
-
-def render_serviceTemplates(object_hash, commands_hash, contact_hash, write_config=True):
+def render(object_hash, commands_hash, contact_hash, write_config=True):
     """Function to build the icinga services templates file:
 template Service "generic-service" {
   max_check_attempts = 3

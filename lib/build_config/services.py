@@ -1,16 +1,10 @@
 #!/usr/bin/python2.7
 from collections import OrderedDict
 # Custom
-import commands
-import serviceTemplates
 from lib.general import *
-from lib.build_hash import build_hash
 from notifications import render_notifications
 
-def config():
-    render_services(build_hash('service'),commands.get_hash(),serviceTemplates.get_hash(), build_hash('contact'))
-
-def render_services(object_hash, commands_hash, servicetemplates_hash, contact_hash):
+def render(object_hash, commands_hash, servicetemplates_hash, contact_hash):
     """Function to build the icinga services config file:
 apply Service "service1" {
   import "generic-service"

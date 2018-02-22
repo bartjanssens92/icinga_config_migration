@@ -7,12 +7,9 @@ from lib.build_hash import build_hash
 from convert import convert_macro
 
 def get_hash():
-    return render_commands(build_hash('command'),False)
+    return render(build_hash('command'),False)
 
-def config():
-    render_commands(build_hash('command'))
-
-def render_commands(object_hash,write_config=True):
+def render(object_hash,write_config=True):
     """Function to build the commands
     They should look like this example:
 object CheckCommand "my-ping-check" {

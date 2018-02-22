@@ -1,10 +1,6 @@
 from lib.general import *
-from lib.build_hash import build_hash
 
-def config():
-    render_hostGroups(build_hash('hostgroup'))
-
-def render_hostGroups(object_hash):
+def render(object_hash):
     """
 
     """

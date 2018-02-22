@@ -1,10 +1,7 @@
 from lib.general import *
 from lib.build_hash import build_hash
 
-def config():
-    render_serviceGroups(build_hash('servicegroup'))
-
-def render_serviceGroups(object_hash):
+def render(object_hash):
     """
 
     """
