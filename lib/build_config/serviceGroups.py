@@ -3,14 +3,14 @@ from lib.build_hash import build_hash
 
 def render(object_hash):
     """
-    Function to build the serviceGroup object, same as for user, host and services.
+    Function to build the serviceGroup object, same as for user, service and services.
     object HostGroup "hg1" {
-      assign where host.name in [ "host1", "host2" ]
+      assign where service.name in [ "service1", "service2" ]
     }
 
     object HostGroup "hg2" {
       groups = [ "hg1" ]
-      assign where host.name == "host3"
+      assign where service.name == "service3"
     }
     """
 
@@ -29,12 +29,14 @@ def render(object_hash):
         servicegroup_hash = object_hash[serviceGroup]
 
         # Init config block
-        config_block = 'object HostGroup "' + servicegroup_hash['alias'] + '" {\n'
+        config_block = 'object ServiceGroup "' + servicegroup_hash['alias'] + '" {\n'
         # Hostgroup members
-        if 'hostgroup_members' in servicegroup_hash:
-            config_block += ' groups = [" ' + '", "'.join(servicegroup_hash['hostgroup_members']) + '" ]\n'
+        if 'servicegroup_members' in servicegroup_hash and len(servicegroup_hash['servicegroup_members']) > 1:
+            config_block += ' groups = [" ' + '", "'.join(servicegroup_hash['servicegroup_members']) + '" ]\n'
+        elif 'servicegroup_members' in servicegroup_hash:
+            config_block += ' groups = [" ' + servicegroup_hash['servicegroup_members'] + '" ]\n'
         # Get members
-        config_block += '  assign where host.name in [ "' + '", "'.join(servicegroup_hash['members']) + '" ]\n'
+        config_block += '  assign where service.name in [ "' + '", "'.join(servicegroup_hash['members']) + '" ]\n'
 
         # Close the config block
         config_block += '}\n'
