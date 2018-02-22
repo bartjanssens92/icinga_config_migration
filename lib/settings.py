@@ -20,4 +20,7 @@ objects_all = ['host','service','serviceTemplate','contact','hostgroup','service
 outputfile = ''
 # Debug levels
 debug = False
+debug2 = False
 debug3 = False
+debug4 = False
+
