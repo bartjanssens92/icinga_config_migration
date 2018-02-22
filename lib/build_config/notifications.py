@@ -1,59 +1,9 @@
 #!/usr/bin/python2.7
 from collections import OrderedDict
 # Custom stuff
-from convert_lib.general import info,error,write_configfile,append_configfile
-from convert_lib.general import debug as debug_general
-from convert_lib.build_hash import build_hash
-from commands import build_icinga_commands
-
-def debug(msg):
-    """
-    Function to enable per-object debugging.
-    """
-    param_debug = False
-    if param_debug:
-        debug_general(msg)
-
-def debug_3(msg):
-    """
-    Function to enable per-object debugging.
-    """
-    param_debug_3 = False
-    if param_debug_3:
-        debug_general(msg)
-
-def convert_options(options_list):
-    """
-    Function to convert notification_options into state and type configuration.
-    """
-    state = []
-    types = ['Custom','Problem']
-    for option in options_list:
-        if option == 'o':
-            state.append('OK')
-        elif option == 'w':
-            state.append('Warning')
-        elif option == 'c':
-            state.append('Critical')
-        elif option == 'u':
-            state.append('Unknown')
-        elif option == 'd':
-            state.append('Down')
-        elif option == 's':
-            types.append('DowntimeStart')
-            types.append('DowntimeEnd')
-            types.append('DowntimeRemoved')
-        elif option == 'r':
-            state.append('OK')
-            types.append('Recovery')
-        elif option == 'f':
-            types.append('FlappingStart')
-            types.append('FlappingEnd')
-        elif option == 'n':
-            state.append('0')
-            types.append('0')
-
-    return state,types
+from lib.general import *
+from lib.build_hash import build_hash
+from convert import convert_options
 
 def build_notification_contacts(object_type, object_hash, contact_hash):
     """Function to get a hash of contacts and contactgroups by notification method"""
@@ -103,7 +53,7 @@ def build_notification_contacts(object_type, object_hash, contact_hash):
         else:
             notification_hash['mail']['groups'].append(object_hash['contact_groups'])
 
-    debug(notification_hash)
+    debug('Notification hash: ' + str(notification_hash))
 
     # Build the configuration blocks
     config_block = ''
@@ -142,12 +92,11 @@ def build_notification_contacts(object_type, object_hash, contact_hash):
 
     return config_block
 
-def build_notifications(object_hash,inputdir,notif_type='host'):
+def render_notifications(object_hash,contact_hash,notif_type='host'):
     """
     Function to build notifiction config blocks.
     """
     # Defaults
-    contact_hash = build_hash('contact',inputdir)
     config_block = ''
 
     # Contacts

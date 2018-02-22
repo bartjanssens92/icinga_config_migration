@@ -1,29 +1,12 @@
 #!/usr/bin/python2.7
-from general import error,info
-from general import debug as debug_general
 from collections import OrderedDict
+# Custom
+import settings
+from general import *
 
-def debug(msg):
-    """
-    Function to enable per-object debugging.
-    """
-    param_debug = False
-    if param_debug:
-        debug_general(msg)
-
-def debug_3(msg):
-    """
-    Function to enable per-object debugging.
-    """
-    param_debug_3 = False
-    if param_debug_3:
-        debug_general(msg)
-
-def build_hash(object_name,inputdir):
-    """This function returns the object hash"""
-
+def build_hash(object_name):
     # Build the filenames
-    inputfile = inputdir + object_name + 's.cfg'
+    inputfile = settings.inputdir + object_name + 's.cfg'
     debug("Inputfile = " + inputfile)
 
     # Create the file objects
@@ -40,12 +23,12 @@ def build_hash(object_name,inputdir):
     line_amount = 0
     for line in input_configfile:
         line_amount += 1
-        debug_3(line)
+        debug3(line)
         # Check if the line starts with a define
         if line.startswith("define"):
             config = {}
         elif line.endswith("}\n"):
-            debug_3(config)
+            debug3(config)
             # Get the keyname
             if object_name in ['service']:
                 if 'check_command' in config and isinstance(config['check_command'], list):
@@ -78,9 +61,9 @@ def build_hash(object_name,inputdir):
         else:
             linearray = line.split()
             key = linearray.pop(0)
-            debug("Linearray: " + str(linearray))
-            debug("Linearray #: " + str(len(linearray)))
-            debug("Key: " + key)
+            debug3("Linearray: " + str(linearray))
+            debug3("Linearray #: " + str(len(linearray)))
+            debug3("Key: " + key)
             # Check if the array contains more then one key
             if len(linearray) == 0:
                 #debug('skip valueless key')
@@ -92,14 +75,15 @@ def build_hash(object_name,inputdir):
                 value = str(" ".join(linearray))
             else:
                 value = str(linearray[0])
-            debug('Value: ' + str(value))
+            debug3('Value: ' + str(value))
             config[key] = value
 
-    #for object_t in mainhash:
-    #    debug('--------------------')
-    #    debug(object_t)
-    #    debug(mainhash[object_t])
+    for object_t in mainhash:
+        debug3('--------------------')
+        debug3(object_t)
+        debug3(mainhash[object_t])
 
     debug("Converted " + str(len(mainhash)) + " " + object_name + " objects.")
     debug("Read " + str(line_amount) + " lines.")
+
     return mainhash

@@ -1,8 +1,42 @@
 #!/usr/bin/python2.7
-from convert_lib.general import debug,info,error,write_configfile,append_configfile
+from lib.general import *
 
-def convert(macro):
-    """Function to convert macros from the old style to the new one
+def convert_options(options_list):
+    """
+    Function to convert notification_options into state and type configuration.
+    """
+    state = []
+    types = ['Custom','Problem']
+    for option in options_list:
+        if option == 'o':
+            state.append('OK')
+        elif option == 'w':
+            state.append('Warning')
+        elif option == 'c':
+            state.append('Critical')
+        elif option == 'u':
+            state.append('Unknown')
+        elif option == 'd':
+            state.append('Down')
+        elif option == 's':
+            types.append('DowntimeStart')
+            types.append('DowntimeEnd')
+            types.append('DowntimeRemoved')
+        elif option == 'r':
+            state.append('OK')
+            types.append('Recovery')
+        elif option == 'f':
+            types.append('FlappingStart')
+            types.append('FlappingEnd')
+        elif option == 'n':
+            state.append('0')
+            types.append('0')
+
+    return state,types
+
+def convert_macro(macro):
+    """
+    Function to convert macros from the old style to the new one
     Following the table described here: https://www.icinga.com/docs/icinga2/latest/doc/23-migrating-from-icinga-1x/#differences-1x-2-runtime-macros
     """
     convert_dict = {
