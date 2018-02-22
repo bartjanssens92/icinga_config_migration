@@ -12,16 +12,19 @@ It does not mean that the generated config will 100% match the behavior of the o
 
 - Hosts
 - HostTemplates
-- Commands
+- Hostgroups
+- Services
+- ServiceTemplates
+- Servicegroups
 - Users
 - Usergroups
-- Services
+- Commands
+- Notifications
 
 ## What doesn't work (yet)
 
-- Notifications ( WIP )
-- Servicegroups
-- Hostgroups
+- Commands assume they are all installed in the same place
+- Build_hash is unable to work with multilines
 
 ## How to use
 
