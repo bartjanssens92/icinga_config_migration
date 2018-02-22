@@ -29,7 +29,7 @@ def render(object_hash):
         servicegroup_hash = object_hash[serviceGroup]
 
         # Init config block
-        config_block = 'object ServiceGroup "' + servicegroup_hash['alias'] + '" {\n'
+        config_block = 'object ServiceGroup "' + servicegroup_hash['servicegroup_name'] + '" {\n'
         # Hostgroup members
         if 'servicegroup_members' in servicegroup_hash and len(servicegroup_hash['servicegroup_members']) > 1:
             config_block += ' groups = [" ' + '", "'.join(servicegroup_hash['servicegroup_members']) + '" ]\n'

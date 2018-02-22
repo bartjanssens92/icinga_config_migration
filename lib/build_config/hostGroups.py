@@ -24,12 +24,12 @@ def render(object_hash):
         debug('--------------------')
         debug(hostGroup)
         debug('--------------------')
-        debug3(object_hash[hostGroup])
+        debug(object_hash[hostGroup])
 
         hostgroup_hash = object_hash[hostGroup]
 
         # Init config block
-        config_block = 'object HostGroup "' + hostgroup_hash['alias'] + '" {\n'
+        config_block = 'object HostGroup "' + hostgroup_hash['hostgroup_name'] + '" {\n'
         # Hostgroup members
         if 'hostgroup_members' in hostgroup_hash and len(hostgroup_hash['hostgroup_members']) > 1:
             config_block += ' groups = [" ' + '", "'.join(hostgroup_hash['hostgroup_members']) + '" ]\n'
