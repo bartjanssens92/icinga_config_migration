@@ -51,7 +51,7 @@ def write_configfile(block):
     Function for creating the outputfile and writing the header to it.
     """
     info('Wrote header to ' + settings.outputfile)
-    fh = open(filelocation, 'w+')
+    fh = open(settings.outputfile, 'w+')
     fh.write(block)
     fh.close
 
@@ -60,7 +60,7 @@ def append_configfile(block):
     Function for appending configblocks to the outputfile.
     """
     debug('Wrote configblock to ' + settings.outputfile)
-    fh = open(filelocation, 'a')
+    fh = open(settings.outputfile, 'a')
     fh.write(block)
     fh.close
 
