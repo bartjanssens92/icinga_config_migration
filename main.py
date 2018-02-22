@@ -4,7 +4,7 @@ from lib import build_config
 """
 Main entry point for generating the icinga2 compatible config.
 
-Need to add examples and more information on how to use this utility.
+@TODO: Need to add examples and more information on how to use this utility.
 """
 def main():
     parse_arguments

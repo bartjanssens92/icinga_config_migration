@@ -26,12 +26,11 @@ It does not mean that the generated config will 100% match the behavior of the o
 ## How to use
 
 ```
-~# ./convert.py -o <object name>
+~# # This will render a complete configuration.
+~# ./main.py
 ```
 
 ## Todo
 
 - Get the debugging flag working properly.
-- Setup some more decent directories.
-- Cleanup commented code.
-- Document code better.
+- See @TODO lines in code

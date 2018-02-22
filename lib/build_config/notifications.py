@@ -6,8 +6,12 @@ from lib.build_hash import build_hash
 from convert import convert_options
 
 def build_notification_contacts(object_type, object_hash, contact_hash):
-    """Function to get a hash of contacts and contactgroups by notification method"""
+    """
+    Function to get a hash of contacts and contactgroups by notification method
+    """
+    # Nagios config defines them in the contacts with the keys (service|host)_notification_commands
     notification_type = str(object_type) + '_notification_commands'
+    # Build the notification_hash
     notification_hash = {
         'mail' : {
             'users' : [],
@@ -28,6 +32,7 @@ def build_notification_contacts(object_type, object_hash, contact_hash):
         if isinstance(object_hash['contacts'], list):
             for contact in object_hash['contacts']:
                 notification_method = contact_hash[contact][notification_type]
+                # Put each one in the correct group
                 if notification_method in ['host-notify-by-email']:
                     notification_hash['mail']['users'].append(contact)
                 elif notification_method in ['host_notify_by_sms']:
@@ -37,6 +42,7 @@ def build_notification_contacts(object_type, object_hash, contact_hash):
 
         else:
             notification_method = contact_hash[object_hash['contacts']][notification_type]
+            # Put it in the correct group
             if notification_method in ['host-notify-by-email']:
                 notification_hash['mail']['users'].append(object_hash['contacts'])
             elif notification_method in ['host_notify_by_sms']:
@@ -45,7 +51,7 @@ def build_notification_contacts(object_type, object_hash, contact_hash):
                 notification_hash['unmatched']['users'].append(contact)
     # Contactgroups
     if 'contact_groups' in object_hash:
-        # Check if there are multiple contacts defind
+        # Check if there are multiple contacts defined
         # Contactgroups always get emailed
         if isinstance(object_hash['contact_groups'], list):
             for contact in object_hash['contact_groups']:
@@ -59,22 +65,30 @@ def build_notification_contacts(object_type, object_hash, contact_hash):
     config_block = ''
 
     # Mail
+    # Check if they aren't empty
     if notification_hash['mail']['users'] or notification_hash['mail']['groups']:
         config_block += '  vars.notification["mail"] = {\n'
+        # Check if there are any groups defined
         if notification_hash['mail']['groups'] != []:
+            # If there are multiple groups defined, join them with the correct format
             if len(notification_hash['mail']['groups']) > 1:
                 config_block += '    groups = [ "' + '", "'.join(notification_hash['mail']['groups']) + '" ]\n'
+            # Otherwise just add the group
             else:
                 config_block += '    groups = [ "' + str(notification_hash['mail']['groups'][0]) + '" ]\n'
+        # Check if there are any users defined
         if notification_hash['mail']['users'] != []:
+            # If there are multiple groups defined, join them with the correct format
             if len(notification_hash['mail']['users']) > 1:
                 config_block += '    users = [ "' + '", "'.join(notification_hash['mail']['users']) + '" ]\n'
+            # Otherwise just add the user
             else:
                 config_block += '    users = [ "' + str(notification_hash['mail']['users'][0]) + '" ]\n'
         # Close the mail notification block
         config_block += '  }\n\n'
 
     # SMS
+    # Check if they aren't empty
     if notification_hash['sms']['users'] or notification_hash['sms']['groups']:
         config_block += '  vars.notification["sms"] = {\n'
         if notification_hash['sms']['groups'] != []:
@@ -95,6 +109,7 @@ def build_notification_contacts(object_type, object_hash, contact_hash):
 def render_notifications(object_hash,contact_hash,notif_type='host'):
     """
     Function to build notifiction config blocks.
+    Usefull as every object uses the same parameters for defining variables.
     """
     # Defaults
     config_block = ''
@@ -122,16 +137,15 @@ def render_notifications(object_hash,contact_hash,notif_type='host'):
 def build_icinga_notifications(inputdir,outputfile):
     """
     Function to build notification objects.
-
-object Notification "<notificationname>" {
-  import "mail-host-notification"
-  host_name = "<thishostname>"
-  command = "<notificationcommandname>"
-  states = [ OK, Warning, Critical ]
-  types = [ Recovery, Problem, Custom ]
-  period = "24x7"
-  users = [ "<contactwithnotificationcommand>" ]
-}
+    object Notification "<notificationname>" {
+      import "mail-host-notification"
+      host_name = "<thishostname>"
+      command = "<notificationcommandname>"
+      states = [ OK, Warning, Critical ]
+      types = [ Recovery, Problem, Custom ]
+      period = "24x7"
+      users = [ "<contactwithnotificationcommand>" ]
+    }
     """
     # Header
     header = '# File generated by script, do not edit!\n'

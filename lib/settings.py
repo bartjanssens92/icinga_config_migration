@@ -1,5 +1,8 @@
 # Settings file
 #
+# Values here are defaults.
+#
+
 # The location of the centreon config
 inputdir = '/home/bjanssens/Documents/centreon/original/centreon-engine/'
 #inputdir = '/mnt/home/bjanssens/Documents/centreon/original/centreon-engine/'

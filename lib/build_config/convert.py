@@ -4,6 +4,7 @@ from lib.general import *
 def convert_options(options_list):
     """
     Function to convert notification_options into state and type configuration.
+    Following the table described here: https://www.icinga.com/docs/icinga2/latest/doc/23-migrating-from-icinga-1x/#manual-config-migration-hints-for-notification-filters
     """
     state = []
     types = ['Custom','Problem']

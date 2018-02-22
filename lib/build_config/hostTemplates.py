@@ -1,9 +1,9 @@
-#!/usr/bin/python2.7
 from lib.general import *
 from notifications import render_notifications
 
 def render(object_hash,contact_hash):
-    """Function to build the hosttemplates:
+    """
+    Function to build the hosttemplates:
     Note that there are states and types now are defined in the Notification template.
     template Host "generic-host" {
       max_check_attempts = 5
@@ -23,17 +23,23 @@ def render(object_hash,contact_hash):
 
     # Loop over the templates
     for template in object_hash:
+
         # Start the configblock
         template_hash = object_hash[template]
+        config_block = 'template Host "' + template_hash['name'] + '" {\n'
+
         debug('--------------------')
         debug(template_hash)
-        config_block = 'template Host "' + template_hash['name'] + '" {\n'
+
+        # Get the needed values
         if 'max_check_attempts' in template_hash:
             config_block += '  max_check_attempts = ' + template_hash['max_check_attempts'] + '\n'
         if 'check_interval' in template_hash:
             config_block += '  check_interval = ' + template_hash['check_interval'] + 'm\n'
         if 'retry_interval' in template_hash:
             config_block += '  retry_interval = ' + template_hash['retry_interval'] + 's\n\n'
+        # There has to be a check command defined, if not, use the default
+        # @TODO: Move default_check_command to settings
         if 'check_command' in template_hash:
             config_block += '  check_command = "' + template_hash['check_command'] + '"\n'
         else:

@@ -1,19 +1,21 @@
-#!/usr/bin/python2.7
 import lib.settings
 from lib.general import *
 from lib.build_hash import build_hash
 
 def render(object_hash, groups_hash):
-    """Function to build the users:
-object User "testconfig-user" {
-  import "generic-user"
-  display_name = "Icinga Test User"
-  email = "icinga@localhost"
-}
+    """
+    Function to build the users:
+    object User "testconfig-user" {
+      import "generic-user"
+      display_name = "Icinga Test User"
+      email = "icinga@localhost"
+    }
 
-object UserGroup "icingaadmins" {
-  display_name = "Icinga 2 Admin Group"
-}   """
+    object UserGroup "icingaadmins" {
+      display_name = "Icinga 2 Admin Group"
+    }
+    """
+
     # Default
     write_contact_blocks = 0
     write_group_blocks = 0
@@ -25,7 +27,7 @@ object UserGroup "icingaadmins" {
     for contact in object_hash:
         debug('--------------------')
         debug(contact)
-        debug(object_hash[contact])
+        debug3(object_hash[contact])
 
         # Build the config block
         config_block = 'object User "' + contact + '" {\n'

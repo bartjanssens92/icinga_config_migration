@@ -1,3 +1,7 @@
+"""
+Class used to parse the arguments passed on the commandline.
+Also does some basic checking.
+"""
 import sys
 import getopt
 import os
@@ -10,7 +14,9 @@ try:
     opts, args = getopt.getopt(sys.argv[1:], "wdo:I:O:", ['dd','write','debug', 'object=', 'input=','output='])
 except getopt.GetoptError as err:
     error( str(err))
+
 for o,a in opts:
+    # @TODO: Get different debugging levels working.
     #if o in ("-dd"):
     #    settings.debug = True
     #    settings.debug3 = True
@@ -32,16 +38,21 @@ for o,a in opts:
         assert False
 
 # Error checking
+# Make sure that the object is defined.
 if not settings.object_name in settings.objects_all and not settings.object_name == 'all':
     error("Object not known")
+# Make sure that the inputdirectory exists.
 if not os.path.isdir(settings.inputdir):
     error("Input directory does not exist!")
+# Make sure that the outputdirectory exists.
 if not os.path.isdir(settings.outputdir):
     error("Output directory does not exist!")
+
+# Arguments cleanup.
+# Add tailing / to inputdir
 if not settings.inputdir.split('/').pop(-1) == '':
-    # Add tailing / to the inputdir
     settings.inputdir = settings.inputdir + '/'
+# Add tailing / to outputdir
 if not settings.outputdir.split('/').pop(-1) == '':
-    # Add tailing / to the outputdir
     settings.outputdir = settings.outputdir + '/'
 
