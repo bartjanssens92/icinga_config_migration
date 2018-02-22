@@ -10,16 +10,39 @@ import __main__ as main
 from general import *
 import settings
 
-def help():
-    """
-    Function to display help text, invoked by passing -h or --help.
-    """
-print ''
-print ''
+# Defaults
+scriptname = main.__file__
+helptext = 'Usage: ' + scriptname + ' [OPTIONS]\n\n'
+options = "hwdo:I:O:"
+options_long = ['help', 'write', 'debug', 'object=', 'input=', 'output=']
+options_desc = [
+        'Show help',
+        '(Depricated) Write the configfiles',
+        'Enable debugging ( level 1 )',
+        'Generate only the configuration of this object',
+        'Use this directoy as input',
+        'Which directory to write the configfiles in',
+        ]
+
+# Generate the help text
+i = 0
+# Include all the options
+for option in list(options):
+    # Ignore ':'
+    if not option == ':':
+        helptext += '  -' + option + ', --' + options_long[i] + '\t\t' + options_desc[i] + '\n'
+        i += 1
+    else:
+        pass
+
+helptext += '\nExamples:\n\n'
+helptext +='* Generate configuration for all the objects:\n  ' + scriptname + '\n'
+helptext +='* Generate configuration for the host object:\n  ' + scriptname + ' -o host\n'
+helptext +='* Generate configuration from /tmp/in:\n  ' + scriptname + ' -I /tmp/in\n'
 
 # Getopt
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "wdo:I:O:", ['dd','write','debug', 'object=', 'input=','output='])
+    opts, args = getopt.getopt(sys.argv[1:], options, options_long )
 except getopt.GetoptError as err:
     error( str(err))
 
@@ -42,6 +65,9 @@ for o,a in opts:
         settings.inputdir = a
     elif o in ( "-O", "--output"):
         settings.outputdir = a
+    elif o in ( "-h", "--help"):
+        print helptext
+        sys.exit(0)
     else:
         assert False
 

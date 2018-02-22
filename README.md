@@ -26,8 +26,24 @@ It does not mean that the generated config will 100% match the behavior of the o
 ## How to use
 
 ```
-~# # This will render a complete configuration.
-~# ./main.py
+Usage: ./main.py [OPTIONS]
+
+  -h, --help    Show help
+  -w, --write   (Depricated) Write the configfiles
+  -d, --debug   Enable debugging ( level 1 )
+  -o, --object=   Generate only the configuration of this object
+  -I, --input=    Use this directoy as input
+  -O, --output=   Which directory to write the configfiles in
+
+Examples:
+
+* Generate configuration for all the objects:
+  ./main.py
+* Generate configuration for the host object:
+  ./main.py -o host
+* Generate configuration from /tmp/in:
+  ./main.py -I /tmp/in
+
 ```
 
 ## Todo
