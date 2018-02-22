@@ -9,6 +9,7 @@ def build_notification_contacts(object_type, object_hash, contact_hash):
     """
     Function to get a hash of contacts and contactgroups by notification method
     """
+    debug('Object_type: ' + object_type)
     # Nagios config defines them in the contacts with the keys (service|host)_notification_commands
     notification_type = str(object_type) + '_notification_commands'
     # Build the notification_hash
@@ -32,23 +33,24 @@ def build_notification_contacts(object_type, object_hash, contact_hash):
         if isinstance(object_hash['contacts'], list):
             for contact in object_hash['contacts']:
                 notification_method = contact_hash[contact][notification_type]
+                debug('Notification method: ' + notification_method)
                 # Put each one in the correct group
-                if notification_method in ['host-notify-by-email']:
+                if notification_method in ['host-notify-by-email','service-notify-by-email']:
                     notification_hash['mail']['users'].append(contact)
-                elif notification_method in ['host_notify_by_sms']:
+                elif notification_method in ['host_notify_by_sms','service-notify_by_sms']:
                     notification_hash['sms']['users'].append(contact)
                 else:
                     notification_hash['unmatched']['users'].append(contact)
-
         else:
             notification_method = contact_hash[object_hash['contacts']][notification_type]
             # Put it in the correct group
-            if notification_method in ['host-notify-by-email']:
+            if notification_method in ['host-notify-by-email','service-notify-by-email']:
                 notification_hash['mail']['users'].append(object_hash['contacts'])
-            elif notification_method in ['host_notify_by_sms']:
+            elif notification_method in ['host_notify_by_sms','service-notify_by_sms']:
                 notification_hash['sms']['users'].append(object_hash['contacts'])
             else:
-                notification_hash['unmatched']['users'].append(contact)
+                notification_hash['unmatched']['users'].append(object_hash['contacts'])
+
     # Contactgroups
     if 'contact_groups' in object_hash:
         # Check if there are multiple contacts defined

@@ -111,7 +111,7 @@ def render(object_hash, commands_hash, contact_hash, write_config=True):
 
             # Notification stuff
             config_block += '\n'
-            config_block += render_notifications(template_hash, contact_hash, 'service')
+            config_block += render_notifications(object_hash[service], contact_hash, 'service')
 
         # Close the config block
         config_block += '}\n'

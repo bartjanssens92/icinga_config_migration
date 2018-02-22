@@ -96,9 +96,8 @@ def render(object_hash, commands_hash, servicetemplates_hash, contact_hash):
                 config_block += '  check_command = "' + check_command + '"\n'
 
         # Notifications
-        # @TODO: Always empty
-        config_block += render_notifications(object_hash[service],contact_hash,'service')
         config_block += '\n'
+        config_block += render_notifications(object_hash[service]['config'],contact_hash,'service')
 
         # Get the hosts
         config_block += '  assign where host.name in [ "' + '", "'.join(object_hash[service]['hosts']) + '" ]\n'
