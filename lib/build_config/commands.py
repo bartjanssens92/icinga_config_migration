@@ -77,6 +77,7 @@ def render(object_hash,write_config=True):
         prev_key = False
         multi_value = False
         arguments = OrderedDict({})
+        noflag_arguments = []
         ignore_dash = False
 
         # Build the arguments hash
@@ -133,7 +134,6 @@ def render(object_hash,write_config=True):
                     key = argument
             # If it's a value
             # 20
-            # $HOSTADDRESS$
             # Ignore the command: '$USER1$/check_snmp_printer'
             elif argument.startswith('$') and not argument.endswith('$') and '/' in argument:
                 debug('command found, ignoring')
@@ -142,6 +142,11 @@ def render(object_hash,write_config=True):
             elif argument.startswith('/'):
                 debug('command found, ignoring')
                 continue
+            # Catch arguments that don't have a flag
+            elif argument.startswith('$') and argument.endswith('$') and not prev_key:
+                debug('Parameter passed without flag: ' + argument)
+                sane_argument = parse_variable(argument.replace('_','',1))
+                noflag_arguments.append(sane_argument)
             # Check if the argument is quoted
             elif argument.startswith("'") and argument.endswith("'"):
                 debug('starting and ending with \'')
@@ -193,6 +198,9 @@ def render(object_hash,write_config=True):
                 prev_key = False
                 debug('no clue what to do with this!')
 
+        # Append the noflag list if there are any
+        if noflag_arguments:
+            arguments['noflag'] = noflag_arguments
         # Start the arguments block
 	arguments_block = '  arguments = {\n'
         vars_block = '\n'
@@ -212,6 +220,9 @@ def render(object_hash,write_config=True):
             elif key == '-o' and 'ARG1' in arguments[key] and arguments[key].startswith('.'):
                 arguments_block += '    "' + key + '"'
                 arguments_block += '  = "' + arguments[key].replace('ARG1', command + '_' + key.replace('-','')) + '"\n'
+            # Ignore the noflag arguments
+            elif key == 'noflag':
+                pass
             else:
                 arguments_block += '    "' + key + '"'
                 arguments_block += ' = "$' + command.replace('-','_') + '_' + key.translate(None, '-') + '$"\n'
@@ -221,6 +232,9 @@ def render(object_hash,write_config=True):
 
             if not arguments[key]:
                 # No value to add if there is none
+                continue
+            # Ignore the noflag arguments
+            elif 'noflag' in key:
                 continue
             # @TODO: Make snmp pass this option correctly
             elif key == '-o' and 'ARG1' in arguments[key] and arguments[key].startswith('.'):
@@ -277,6 +291,8 @@ def render(object_hash,write_config=True):
         # @TODO: Check where the command is housed on the system
         elif command_options:
 	    config_block += '    PluginDir + "/' + command_array[0].split('/').pop() + '", "' + command_options.lstrip(' ') + '"\n'
+        elif noflag_arguments:
+            config_block += '    PluginDir + "/' + command_array[0].split('/').pop() + '", "' + '", "'.join(noflag_arguments) + '"\n'
         else:
 	    config_block += '    PluginDir + "/' + command_array[0].split('/').pop() + '"\n'
 
@@ -308,6 +324,8 @@ def parse_variable(name):
         return '$host.' + name.replace('HOST','').replace('$','').replace('"','').replace("'",'').replace('_','',1).lower() + '$'
     elif 'SERVICE' in name:
         return '$service.' + name.replace('SERVICE','').replace('$','').replace('"','').replace("'",'').replace('_','',1).lower() + '$'
+    elif 'ARG' in name:
+        return name.title()
     else:
       return 'Error'
 

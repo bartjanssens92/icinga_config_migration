@@ -68,18 +68,32 @@ def render(object_hash, commands_hash, servicetemplates_hash, contact_hash):
 
                 # Build the values to pass
                 argument_i = 1
-                for key in arguments:
-                    # Check if the value of the key is $ARG\n$
-                    if arguments[key] in ['$ARG1$','$ARG2$','$ARG3$','$ARG4$']:
-                        # Use the unique command name
-                        key = 'vars.' + service_name.replace('-','_') + '_' + key.translate(None, '-')
-                        value = check_command.split('!')[argument_i].replace('"','\\"')
-                        config_block += '  ' + key + ' = "' + value + '"\n'
-                        argument_i+= 1
-                    else:
-                        debug('Could not build var name for: ' + key)
-                        pass
 
+                # Check the parameters that do not have a flag first
+                if 'noflag' in arguments:
+                    for argument in arguments['noflag']:
+                        if 'Arg' in argument:
+                            key = 'vars.' + argument.replace('$','')
+                            value = check_command.split('!')[argument_i].replace('"','\\"')
+                            debug('Noflag: ' + key + ' : ' + value)
+                            config_block += '  ' + key + ' = "' + value + '"\n'
+                            argument_i += 1
+                        else:
+                            debug('Could not build var name for: ' + key)
+                            pass
+                # Otherwise look for parameters that have a flag
+                else:
+                    for key in arguments:
+                        # Check if the value of the key is $ARG\n$
+                        if arguments[key] in ['$ARG1$','$ARG2$','$ARG3$','$ARG4$']:
+                            # Use the unique command name
+                            key = 'vars.' + service_name.replace('-','_') + '_' + key.translate(None, '-')
+                            value = check_command.split('!')[argument_i].replace('"','\\"')
+                            config_block += '  ' + key + ' = "' + value + '"\n'
+                            argument_i += 1
+                        else:
+                            debug('Could not build var name for: ' + key)
+                            pass
             else:
                 config_block += '  check_command = "' + check_command + '"\n'
 
