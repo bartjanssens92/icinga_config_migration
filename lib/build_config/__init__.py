@@ -9,6 +9,7 @@ import serviceTemplates
 import serviceGroups
 import commands
 import contacts
+import resource
 
 def actions(object_name, contact_hash):
     """
@@ -34,6 +35,8 @@ def actions(object_name, contact_hash):
         commands.render(build_hash(object_name))
     elif object_name in ['contact']:
         contacts.render(contact_hash, build_hash('contactgroup'))
+    elif object_name in ['resource']:
+        resource.render()
     # @TODO: Render lists of what contact gets what notifications?
     #elif object_name in ['notification']:
     #    build_icinga_notifications(inputdir,outputfile)

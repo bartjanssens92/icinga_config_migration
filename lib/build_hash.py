@@ -98,6 +98,7 @@ def build_hash(object_name):
         debug4(object_t)
         debug4(mainhash[object_t])
 
+    input_configfile.close()
     debug("Converted " + str(len(mainhash)) + " " + object_name + " objects.")
     debug("Read " + str(line_amount) + " lines.")
 

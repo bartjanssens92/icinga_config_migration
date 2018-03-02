@@ -15,7 +15,7 @@ header = '# File build by script, DO NOT MODIFY!\n'
 write = False
 # Object names
 object_name = 'all'
-objects_all = ['host','service','serviceTemplate','contact','hostgroup','servicegroup','hostTemplate','command','notification']
+objects_all = ['host','service','serviceTemplate','contact','hostgroup','servicegroup','hostTemplate','command','notification','resource']
 # Declaring an empty outputfile
 outputfile = ''
 # Debug levels
