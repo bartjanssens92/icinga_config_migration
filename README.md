@@ -53,11 +53,5 @@ Examples:
 
 - Bugfix: Handle commands that just pass arguments without flags.
 - Bugfix: SNMP service not passing the -o option correctly.
-- Bugfix: Parameters from the resource.cfg are not passed, these should be constants:
-
-```
-const Name = "value"
-```
-
 - Get the debugging flag working properly.
 - See @TODO lines in code
