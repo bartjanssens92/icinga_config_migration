@@ -58,6 +58,13 @@ def render(object_hash, contact_hash):
         config_block += '\n'
         config_block += '  address = "' + host_hash['address'] + '"\n\n'
 
+        # Look for extra host parameters
+        for option in host_hash:
+            # Hosts parameters are always starting with _ followed by an uppercase word.
+            if option.startswith('_') and not 'HOST_ID' in option:
+                debug3('Found extra parameter: ' + option)
+                config_block += '  vars.' + option.replace('_','',1).lower() + ' = "' + host_hash[option] + '"\n'
+
         # Check the notifications
         config_block += render_notifications(host_hash, contact_hash)
 

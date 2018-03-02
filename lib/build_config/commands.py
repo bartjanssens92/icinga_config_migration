@@ -224,11 +224,12 @@ def render(object_hash,write_config=True):
                 continue
             elif key == '-o' and 'ARG1' in arguments[key] and arguments[key].startswith('.'):
                 value = ' = ""'
-            # Get the $HOSTNAME$ type parameters to the new format
+            # Get host parameters setup
             elif arguments[key].startswith('$_') and arguments[key].endswith('$'):
-                value = ' = ""'
+                value = ' = "' + parse_variable(arguments[key]) + '"'
             elif arguments[key].startswith("'$_") and arguments[key].endswith("$'"):
-                value = ' = ""'
+                value = ' = "' + parse_variable(arguments[key]) + '"'
+            # Get the $HOSTNAME$ type parameters to the new format
             elif arguments[key].startswith('$') and arguments[key].endswith('$'):
                 value = ' = "' + convert_macro(arguments[key]) + '"'
             # The value needs to be quoted with "
@@ -282,6 +283,17 @@ def render(object_hash,write_config=True):
         info('Wrote ' + str(write_blocks) + ' command objects')
     else:
         return return_hash
+
+def parse_variable(name):
+    """
+    Function to convert a variable name into a $host.paramname$ or $service.paramname.
+    """
+    if 'HOST' in name:
+        return '$host.' + name.replace('HOST','').replace('$','').replace('"','').replace("'",'').replace('_','',1).lower() + '$'
+    elif 'SERVICE' in name:
+        return '$service.' + name.replace('SERVICE','').replace('$','').replace('"','').replace("'",'').replace('_','',1).lower() + '$'
+    else:
+      return 'Error'
 
 def quoting_sane(i):
     """
