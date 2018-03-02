@@ -36,7 +36,7 @@ def actions(object_name, contact_hash):
     elif object_name in ['contact']:
         contacts.render(contact_hash, build_hash('contactgroup'))
     elif object_name in ['resource']:
-        resource.render()
+        resource.render(object_name)
     # @TODO: Render lists of what contact gets what notifications?
     #elif object_name in ['notification']:
     #    build_icinga_notifications(inputdir,outputfile)

@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 from lib.general import *
 
-def render():
+def render(object_name):
     """Function to build the icinga hosts config file:
     const Valuename = "value"
     """
@@ -9,7 +9,7 @@ def render():
     write_blocks = 0
 
     # Reading the file here as it's completely different from the other objects
-    inputfile = settings.inputdir + settings.object_name + '.cfg'
+    inputfile = settings.inputdir + object_name + '.cfg'
     input_configfile = open(inputfile, 'r')
 
     # Header
