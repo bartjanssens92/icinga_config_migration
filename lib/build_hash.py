@@ -25,13 +25,13 @@ def build_hash(object_name):
     # @TODO: Manage multilines
     for line in input_configfile:
         line_amount += 1
-        debug3(line)
+        debug4(line)
         # Check if the line starts with a define
         if line.startswith("define"):
             config = {}
         # Check if the line ends with '}'
         elif line.endswith("}\n"):
-            debug3(config)
+            debug4(config)
             # Get the keyname
             if object_name in ['service']:
                 # For services this should be an unique name based on the check_command
@@ -73,9 +73,9 @@ def build_hash(object_name):
             # Nagios config the first word is the key
             # Remove the key from the array
             key = linearray.pop(0)
-            debug3("Linearray: " + str(linearray))
-            debug3("Linearray #: " + str(len(linearray)))
-            debug3("Key: " + key)
+            debug4("Linearray: " + str(linearray))
+            debug4("Linearray #: " + str(len(linearray)))
+            debug4("Key: " + key)
             # Check if the array contains more then one key
             if len(linearray) == 0:
                 #debug('skip valueless key')
@@ -89,14 +89,14 @@ def build_hash(object_name):
             else:
                 value = str(linearray[0])
 
-            debug3('Value: ' + str(value))
+            debug4('Value: ' + str(value))
             config[key] = value
 
     # Debugging, print the complete object
     for object_t in mainhash:
-        debug3('--------------------')
-        debug3(object_t)
-        debug3(mainhash[object_t])
+        debug4('--------------------')
+        debug4(object_t)
+        debug4(mainhash[object_t])
 
     debug("Converted " + str(len(mainhash)) + " " + object_name + " objects.")
     debug("Read " + str(line_amount) + " lines.")
