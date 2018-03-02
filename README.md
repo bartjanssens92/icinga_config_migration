@@ -51,30 +51,7 @@ Examples:
 
 ## Todo
 
-- Bugfix: Add hostparameters to the hosts as they are currently ignored.
-  Ex:
-```
-define host {
-    hostname          some.host.name
-    _SNMPCOMMUNITY    public
-    _SNMPVERSION      2c
-    ...
-}
-```
-
-Should generate:
-
-```
-object Host "some.host.name" {
-  ...
-  vars.snmpcommunity = "public"
-  vars.snmpversion = "2c"
-
-}
-```
-
-The check_command object should also not ignore these parameters.
-
+- Bugfix: Handle commands that just pass arguments without flags.
 - Bugfix: SNMP service not passing the -o option correctly.
 - Bugfix: Parameters from the resource.cfg are not passed, these should be constants:
 
