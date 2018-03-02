@@ -77,6 +77,7 @@ def render(object_hash, commands_hash, servicetemplates_hash, contact_hash):
                         config_block += '  ' + key + ' = "' + value + '"\n'
                         argument_i+= 1
                     else:
+                        debug('Could not build var name for: ' + key)
                         pass
 
             else:
