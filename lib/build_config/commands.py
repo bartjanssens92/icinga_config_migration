@@ -217,37 +217,53 @@ def render(object_hash,write_config=True):
                 arguments_block += ' = "$' + command.replace('-','_') + '_' + key.translate(None, '-') + '$"\n'
 
             # Build the vars block
-            debug('' + str(arguments[key]))
+            debug('Raw Value: ' + str(arguments[key]))
 
             if not arguments[key]:
                 # No value to add if there is none
                 continue
+            # @TODO: Make snmp pass this option correctly
             elif key == '-o' and 'ARG1' in arguments[key] and arguments[key].startswith('.'):
-                value = ' = ""'
+                value = '"TODO"'
             # Get host parameters setup
             elif arguments[key].startswith('$_') and arguments[key].endswith('$'):
-                value = ' = "' + parse_variable(arguments[key]) + '"'
+                value = '"' + parse_variable(arguments[key]) + '"'
             elif arguments[key].startswith("'$_") and arguments[key].endswith("$'"):
-                value = ' = "' + parse_variable(arguments[key]) + '"'
+                value = '"' + parse_variable(arguments[key]) + '"'
             # Get the $HOSTNAME$ type parameters to the new format
             elif arguments[key].startswith('$') and arguments[key].endswith('$'):
-                value = ' = "' + convert_macro(arguments[key]) + '"'
+                globalparam, macro = convert_macro(arguments[key])
+                if globalparam:
+                    value = macro
+                else:
+                    value = '"' + macro + '"'
+            # Quoted parameter...
+            elif arguments[key].startswith("'$") and arguments[key].endswith("$'"):
+                globalparam, macro = convert_macro(arguments[key].replace("'",''))
+                if globalparam:
+                    value = macro
+                else:
+                    value = '"' + macro + '"'
             # The value needs to be quoted with "
             # If it already is, just add it
             elif arguments[key].startswith('"') and arguments[key].endswith('"'):
-                value = ' = ' + arguments[key]
+                value = arguments[key]
             # Otherwise if it's using ', replace those
             elif arguments[key].startswith("'") and arguments[key].endswith("'"):
-                value = '= "' + str(arguments[key].translate(None, "'")) + '"'
+                value = '"' + str(arguments[key].translate(None, "'")) + '"'
             # Numbers don't have to be quoted
             elif is_number(arguments[key]):
-                value = ' = ' + arguments[key]
+                value = arguments[key]
             # Nothing special, just add it
             else:
-                value = ' = "' + str(arguments[key]) + '"'
+                value = '"' + str(arguments[key]) + '"'
 
             # To make sure to have unique variable names, use the command and replace the illigal characters
-            vars_block += '  vars.' + command.replace('-','_') + '_' + key.translate(None, '-') + value + '\n'
+            varname = 'vars.' + command.replace('-','_') + '_' + key.translate(None, '-')
+            # To not pass empty flags to the command
+            debug('Value: ' + value)
+            if not value == '""':
+                vars_block += '  ' + varname + ' = ' + value + '\n'
 
         # Close the arguments block
 	arguments_block = arguments_block + '  }\n'
@@ -269,10 +285,10 @@ def render(object_hash,write_config=True):
 
         # Add the arguments and the vars blocks and close the command block
         config_block = config_block + arguments_block + vars_block + '}\n'
-        debug(config_block)
 
         # Write the config block
         if write_config:
+            debug(config_block)
             append_configfile(config_block)
             write_blocks += 1
         # Or append to the return_hash
