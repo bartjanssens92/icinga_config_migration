@@ -200,7 +200,6 @@ def render(object_hash,write_config=True):
                 debug('next multivalue: ' + argument)
                 arguments[key] += ' ' + quoting_sane(argument)
             # To catch smth like '-a $ARG1$ $ARG2$'
-            # @WIP
             elif prev_key and arguments[key]:
                 debug('argument with multiple arguments')
                 # Make a list of the key

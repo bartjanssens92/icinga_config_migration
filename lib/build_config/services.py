@@ -102,6 +102,15 @@ def render(object_hash, commands_hash, servicetemplates_hash, contact_hash):
                     elif '$ARG' in arguments[argument] and arguments[argument].count('$ARG') > 1:
                         debug('Multiple interpolated arguments: ' + arguments[argument])
                     # Otherwise, ignore the flag
+                    elif isinstance(arguments[argument], list) and not argument == 'noflag':
+                        debug('Argumentlist: ' + argument)
+                        for arg in arguments[argument]:
+                            if 'ARG' in arg:
+                                argument_i = get_argument_number(arg)
+                                key = 'vars.' + arg.title().replace('$','')
+                                value = check_command.split('!')[argument_i].replace('"','\\"')
+                                config_block += '  ' + key + ' = "' + value + '"\n'
+                        continue
                     else:
                         debug('Could not build var name for: ' + argument)
                         continue
