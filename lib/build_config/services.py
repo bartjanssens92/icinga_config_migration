@@ -1,5 +1,6 @@
 #!/usr/bin/python2.7
 from collections import OrderedDict
+import re
 # Custom
 from lib.general import *
 from notifications import render_notifications
@@ -79,21 +80,38 @@ def render(object_hash, commands_hash, servicetemplates_hash, contact_hash):
                             config_block += '  ' + key + ' = "' + value + '"\n'
                             argument_i += 1
                         else:
-                            debug('Could not build var name for: ' + key)
+                            debug('Could not build var name for: ' + argument)
                             pass
                 # Otherwise look for parameters that have a flag
                 else:
-                    for key in arguments:
+                    for argument in arguments:
                         # Check if the value of the key is $ARG\n$
-                        if arguments[key] in ['$ARG1$','$ARG2$','$ARG3$','$ARG4$']:
+                        if arguments[argument] in ['$ARG1$','$ARG2$','$ARG3$','$ARG4$','$ARG5$']:
                             # Use the unique command name
-                            key = 'vars.' + service_name.replace('-','_') + '_' + key.translate(None, '-')
-                            value = check_command.split('!')[argument_i].replace('"','\\"')
-                            config_block += '  ' + key + ' = "' + value + '"\n'
-                            argument_i += 1
+                            argument_i = get_argument_number(arguments[argument])
+                            key = 'vars.' + service_name.replace('-','_') + '_' + argument.translate(None, '-')
+                        # There are some cases where the $ARG$ is inside a string
+                        # Ex.: ('-o', '.1.3.6.1.2.1.33.1.4.4.1.4.$ARG1$'),
+                        #      ('-l', " 'power in use phase $ARG1$'")
+                        elif '$ARG' in arguments[argument] and arguments[argument].count('$ARG') == 1:
+                            debug('Interpolated argument: ' + arguments[argument])
+                            argument_i = get_argument_number(arguments[argument])
+                            key = 'vars.' + service_name.replace('-','_') + '_' + argument.translate(None, '-')
+
+                        # @TODO: There are cases where there are more then 2 arguments interpolated
+                        # Ex.: ('-u', '"http://$HOSTADDRESS$:$ARG1$/$ARG2$"')
+                        elif '$ARG' in arguments[argument] and arguments[argument].count('$ARG') > 1:
+                            debug('Multiple interpolated arguments: ' + arguments[argument])
+                        # Otherwise, ignore the flag
                         else:
-                            debug('Could not build var name for: ' + key)
-                            pass
+                            debug('Could not build var name for: ' + argument)
+                            continue
+
+                        # Setup the variable
+                        value = check_command.split('!')[argument_i].replace('"','\\"')
+                        config_block += '  ' + key + ' = "' + value + '"\n'
+
+            # Otherwise it's not passing options
             else:
                 config_block += '  check_command = "' + check_command + '"\n'
 
@@ -125,6 +143,17 @@ def render(object_hash, commands_hash, servicetemplates_hash, contact_hash):
         write_blocks += 1
 
     info('Wrote ' + str(write_blocks) + ' service objects')
+
+def get_argument_number(string):
+    """
+    Function to find the argument number, returns an integer.
+    """
+    regex = re.compile('\$ARG\d\$')
+    matches = regex.findall(string)
+    debug("Found '$ARG\d$': " + str(matches))
+    # @TODO: Could be that there are multiple matches here
+    i = int( matches[0].replace('$','').replace('ARG','') )
+    return i
 
 def find_check_command(template_hash, service):
     """

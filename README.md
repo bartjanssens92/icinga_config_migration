@@ -52,6 +52,5 @@ Examples:
 ## Todo
 
 - Bugfix: Handle commands that just pass arguments without flags.
-- Bugfix: SNMP service not passing the -o option correctly.
 - Get the debugging flag working properly.
 - See @TODO lines in code

@@ -236,9 +236,9 @@ def render(object_hash,write_config=True):
             # Ignore the noflag arguments
             elif 'noflag' in key:
                 continue
-            # @TODO: Make snmp pass this option correctly
+            # Make snmp pass this option correctly
             elif key == '-o' and 'ARG1' in arguments[key] and arguments[key].startswith('.'):
-                value = '"TODO"'
+                value = '""'
             # Get host parameters setup
             elif arguments[key].startswith('$_') and arguments[key].endswith('$'):
                 value = '"' + parse_variable(arguments[key]) + '"'
