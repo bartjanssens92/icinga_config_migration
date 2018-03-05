@@ -61,6 +61,9 @@ def render(object_hash,write_config=True):
         debug(command)
         debug('--------------------')
         debug3(object_hash[command])
+        # Reimplement this but splitting the command_line on '-'
+        # Might make this code cleaner as now it's to make your eyes bleed
+        #debug(str(object_hash[command]['command_line'].split('-')))
         # Ignore notifications as those are dealth with somewhere else
         # The are also included in the default icinga configuration
         if 'notify' in command:
@@ -79,6 +82,7 @@ def render(object_hash,write_config=True):
         arguments = OrderedDict({})
         noflag_arguments = []
         ignore_dash = False
+        flags_found = False
 
         # Build the arguments hash
         """
@@ -87,21 +91,27 @@ def render(object_hash,write_config=True):
         into this:
         {'-C': 'public', '-c': '95000,95000', '-N': '$ARG1$', '-H': '$HOSTADDRESS$', '-K': False, '-w': '90000,90000', '-V': '1'}
         """
+        debug('-ARGUMENTS-------------------')
         for argument in command_array:
-            # Get the key first
             debug('ARG: ' + str(argument))
+
+            # Get the key first
             # To catch smth like '-B -K'
             if prev_key and not key in arguments:
                 arguments[key] = ''
                 debug('Created new key: ' + key)
+
             # If the previous was a key and it's the last element
             # To catch stuff that ends with -B and the key not having a value
             if prev_key and argument == command_array[-1] and not '=' in argument and argument.startswith('-'):
                 arguments[argument] = ''
                 debug('Last element')
                 debug('Created new key: ' + argument)
+
             # Assume a key is always starting with a '-' unless we are ignoring it
             if argument.startswith('-') and not ignore_dash:
+                flags_found = True
+                prev_key = False
                 # -h=
                 # --host=
                 if '=' in argument:
@@ -143,7 +153,7 @@ def render(object_hash,write_config=True):
                 debug('command found, ignoring')
                 continue
             # Catch arguments that don't have a flag
-            elif argument.startswith('$') and argument.endswith('$') and not prev_key:
+            elif argument.startswith('$') and argument.endswith('$') and not prev_key and not flags_found:
                 debug('Parameter passed without flag: ' + argument)
                 sane_argument = parse_variable(argument.replace('_','',1))
                 noflag_arguments.append(sane_argument)
@@ -189,10 +199,21 @@ def render(object_hash,write_config=True):
                 prev_key = False
                 debug('next multivalue: ' + argument)
                 arguments[key] += ' ' + quoting_sane(argument)
+            # To catch smth like '-a $ARG1$ $ARG2$'
+            # @WIP
+            elif prev_key and arguments[key]:
+                debug('argument with multiple arguments')
+                # Make a list of the key
+                if not isinstance(arguments[key], list):
+                    init_list = [arguments[key]]
+                    arguments[key] = init_list
+                arguments[key].append(argument)
             # Only add the argument if the pervious thing added was a key
             # To ensure that nothing gets overwritten
             elif prev_key:
+                debug('Setting: ' + key + ' to: ' + argument)
                 arguments[key] = argument
+                #prev_key = False
             # If it gets here we are missing a case
             else:
                 prev_key = False
@@ -207,9 +228,10 @@ def render(object_hash,write_config=True):
         command_options = ''
 
         # Build the keys block
-        debug('Command arguments: ' + str(arguments))
+        debug('-VARS-------------------')
 
         for key in arguments:
+            debug('Building for key: ' + key)
             # Build the arguments block
             # If the value block is empty, do not add a parameter for it
             if not arguments[key]:
@@ -223,6 +245,15 @@ def render(object_hash,write_config=True):
             # Ignore the noflag arguments
             elif key == 'noflag':
                 pass
+            elif isinstance(arguments[key], list):
+                tmplist = []
+                for param in arguments[key]:
+                    if 'ARG' in argument:
+                        tmplist.append(param.replace('ARG', 'Arg'))
+                    else:
+                        tmplist.append(convert_macro(param)[1])
+                arguments_block += '    "' + key + '"'
+                arguments_block += ' = "' + ' '.join(tmplist) + '"\n'
             else:
                 arguments_block += '    "' + key + '"'
                 arguments_block += ' = "$' + command.replace('-','_') + '_' + key.translate(None, '-') + '$"\n'
@@ -235,6 +266,9 @@ def render(object_hash,write_config=True):
                 continue
             # Ignore the noflag arguments
             elif 'noflag' in key:
+                continue
+            # Lists are special
+            elif isinstance(arguments[key], list):
                 continue
             # Make snmp pass this option correctly
             elif key == '-o' and 'ARG1' in arguments[key] and arguments[key].startswith('.'):

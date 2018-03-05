@@ -83,33 +83,32 @@ def render(object_hash, commands_hash, servicetemplates_hash, contact_hash):
                             debug('Could not build var name for: ' + argument)
                             pass
                 # Otherwise look for parameters that have a flag
-                else:
-                    for argument in arguments:
-                        # Check if the value of the key is $ARG\n$
-                        if arguments[argument] in ['$ARG1$','$ARG2$','$ARG3$','$ARG4$','$ARG5$']:
-                            # Use the unique command name
-                            argument_i = get_argument_number(arguments[argument])
-                            key = 'vars.' + service_name.replace('-','_') + '_' + argument.translate(None, '-')
-                        # There are some cases where the $ARG$ is inside a string
-                        # Ex.: ('-o', '.1.3.6.1.2.1.33.1.4.4.1.4.$ARG1$'),
-                        #      ('-l', " 'power in use phase $ARG1$'")
-                        elif '$ARG' in arguments[argument] and arguments[argument].count('$ARG') == 1:
-                            debug('Interpolated argument: ' + arguments[argument])
-                            argument_i = get_argument_number(arguments[argument])
-                            key = 'vars.' + service_name.replace('-','_') + '_' + argument.translate(None, '-')
+                for argument in arguments:
+                    # Check if the value of the key is $ARG\n$
+                    if arguments[argument] in ['$ARG1$','$ARG2$','$ARG3$','$ARG4$','$ARG5$']:
+                        # Use the unique command name
+                        argument_i = get_argument_number(arguments[argument])
+                        key = 'vars.' + service_name.replace('-','_') + '_' + argument.translate(None, '-')
+                    # There are some cases where the $ARG$ is inside a string
+                    # Ex.: ('-o', '.1.3.6.1.2.1.33.1.4.4.1.4.$ARG1$'),
+                    #      ('-l', " 'power in use phase $ARG1$'")
+                    elif '$ARG' in arguments[argument] and arguments[argument].count('$ARG') == 1:
+                        debug('Interpolated argument: ' + arguments[argument])
+                        argument_i = get_argument_number(arguments[argument])
+                        key = 'vars.' + service_name.replace('-','_') + '_' + argument.translate(None, '-')
 
-                        # @TODO: There are cases where there are more then 2 arguments interpolated
-                        # Ex.: ('-u', '"http://$HOSTADDRESS$:$ARG1$/$ARG2$"')
-                        elif '$ARG' in arguments[argument] and arguments[argument].count('$ARG') > 1:
-                            debug('Multiple interpolated arguments: ' + arguments[argument])
-                        # Otherwise, ignore the flag
-                        else:
-                            debug('Could not build var name for: ' + argument)
-                            continue
+                    # @TODO: There are cases where there are more then 2 arguments interpolated
+                    # Ex.: ('-u', '"http://$HOSTADDRESS$:$ARG1$/$ARG2$"')
+                    elif '$ARG' in arguments[argument] and arguments[argument].count('$ARG') > 1:
+                        debug('Multiple interpolated arguments: ' + arguments[argument])
+                    # Otherwise, ignore the flag
+                    else:
+                        debug('Could not build var name for: ' + argument)
+                        continue
 
-                        # Setup the variable
-                        value = check_command.split('!')[argument_i].replace('"','\\"')
-                        config_block += '  ' + key + ' = "' + value + '"\n'
+                    # Setup the variable
+                    value = check_command.split('!')[argument_i].replace('"','\\"')
+                    config_block += '  ' + key + ' = "' + value + '"\n'
 
             # Otherwise it's not passing options
             else:
