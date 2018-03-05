@@ -323,7 +323,7 @@ def render(object_hash,write_config=True):
 	    config_block += '    "' + command_array[0] + '"\n'
         # @TODO: Check where the command is housed on the system
         elif command_options:
-	    config_block += '    PluginDir + "/' + command_array[0].split('/').pop() + '", "' + command_options.lstrip(' ') + '"\n'
+	    config_block += '    PluginDir + "/' + command_array[0].split('/').pop() + '", "' + command_options.lstrip(' ').replace(' ','", "') + '",\n'
         elif noflag_arguments:
             config_block += '    PluginDir + "/' + command_array[0].split('/').pop() + '", "' + '", "'.join(noflag_arguments) + '"\n'
         else:
