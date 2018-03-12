@@ -149,7 +149,7 @@ def render(object_hash,write_config=True):
                 debug('command found, ignoring')
                 continue
             # See if a shell get's called: '/bin/sh'
-            elif argument.startswith('/'):
+            elif argument.startswith('/') and not prev_key:
                 debug('command found, ignoring')
                 continue
             # Catch arguments that don't have a flag
