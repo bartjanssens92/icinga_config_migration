@@ -100,7 +100,14 @@ def render(object_hash, commands_hash, servicetemplates_hash, contact_hash):
                     # @TODO: There are cases where there are more then 2 arguments interpolated
                     # Ex.: ('-u', '"http://$HOSTADDRESS$:$ARG1$/$ARG2$"')
                     elif '$ARG' in arguments[argument] and arguments[argument].count('$ARG') > 1:
-                        debug('Multiple interpolated arguments: ' + arguments[argument])
+                        interpol_args = re.findall('\$ARG\d\$', arguments[argument])
+                        debug('Multiple interpolated arguments: ' + str(interpol_args))
+                        for interpol_arg in interpol_args:
+                            arg_i = get_argument_number(interpol_arg)
+                            key = interpol_arg.title().replace('$','')
+                            value = check_command.split('!')[arg_i].replace('"','\\"')
+                            config_block += '  ' + key + ' = "' + value + '"\n'
+                        continue
                     # Otherwise, ignore the flag
                     elif isinstance(arguments[argument], list) and not argument == 'noflag':
                         debug('Argumentlist: ' + argument)

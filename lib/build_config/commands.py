@@ -1,4 +1,5 @@
 #!/usr/bin/python2.7
+import re
 from collections import OrderedDict
 # Custom
 from lib.general import *
@@ -221,6 +222,7 @@ def render(object_hash,write_config=True):
         # Append the noflag list if there are any
         if noflag_arguments:
             arguments['noflag'] = noflag_arguments
+
         # Start the arguments block
 	arguments_block = '  arguments = {\n'
         vars_block = '\n'
@@ -291,6 +293,15 @@ def render(object_hash,write_config=True):
                     value = macro
                 else:
                     value = '"' + macro + '"'
+            # Deal with interpolated arguments
+            elif '$ARG' in arguments[key]:
+                interpolated_args = re.findall('\$ARG\d\$',arguments[key])
+                debug('Interpolated arguments found: ' + str(interpolated_args))
+                sane_string = arguments[key]
+                for interpol_arg in interpolated_args:
+                    sane_arg = '$service.' + interpol_arg.replace('$','').title() + '$'
+                    sane_string = sane_string.replace(interpol_arg, sane_arg)
+                value = '"' + sane_string + '"'
             # The value needs to be quoted with "
             # If it already is, just add it
             elif arguments[key].startswith('"') and arguments[key].endswith('"'):
@@ -381,4 +392,3 @@ def quoting_sane(i):
         debug("found '")
         pass
     return i
-
